@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KwcilID - KwcilID Official Website</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url("https://files.catbox.moe/mw4xyl.jpg") no-repeat center center fixed;
+      background-size: cover;
+      background-attachment: fixed;
+      color: #fff;
+    }
+    header {
+      display: flex; align-items: center;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    header img {
+      width: 55px; height: 55px; border-radius: 100%;
+      margin-right: 15px; border: 2px solid #00f0ff;
+    }
+    .judul { font-weight: 800; font-size: 22px; }
+    .subjudul { font-size: 14px; color: #cbd5e1; }
+    main {
+      padding: 30px 20px;
+      max-width: 750px; margin: auto;
+    }
+    h1 {
+      font-size: 30px; font-weight: 800; margin-bottom: 10px;
+    }
+    p {
+      font-size: 15px; line-height: 1.8; color: #e2e8f0; margin-bottom: 30px;
+    }
+    .section-title {
+      font-size: 18px; font-weight: 700; margin-top: 40px;
+      border-bottom: 2px solid #38bdf8;
+      padding-bottom: 4px; display: inline-block; margin-bottom: 10px;
+    }
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 15px; margin-top: 20px;
+    }
+    .menu a {
+      background: #1e293b; border: 1px solid #38bdf8;
+      padding: 12px; border-radius: 10px; text-align: center;
+      font-size: 14px; color: #fff; text-decoration: none;
+      transition: 0.3s;
+    }
+    .menu a:hover {
+      background: #38bdf8; color: #000;
+    }
+    button {
+      background: #38bdf8; color: #000;
+      border: none; border-radius: 6px;
+      padding: 10px; font-weight: 600;
+      cursor: pointer; width: 100%;
+      margin-top: 10px;
+    }
+    .modal {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+    .modal-content {
+      background: #1e293b;
+      padding: 25px; border-radius: 12px;
+      max-width: 400px; width: 90%;
+      animation: slideUp 0.4s ease-in-out;
+    }
+    .modal-content input, .modal-content textarea {
+      width: 100%; padding: 10px; margin-bottom: 10px;
+      border: none; border-radius: 6px; font-size: 14px;
+    }
+    .modal-content input[type="file"] {
+      padding: 5px; background: #f1f1f1; color: #000;
+    }
+    #showHistoryText {
+      font-size: 11px;
+      color: #60a5fa;
+      cursor: pointer;
+      margin-top: 10px;
+      text-align: center;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="https://files.catbox.moe/mw4xyl.jpg" alt="Wanz Profile">
+  <div>
+    <div class="judul">KwcilID</div>
+    <div class="subjudul">KwcilID Official Website</div>
+  </div>
+</header>
+
+<main>
+  <h1>Selamat Datang di Kwcil Store</h1>
+  <p>Kami hadir untuk memenuhi seluruh kebutuhan digital kamu.</p>
+
+  <div class="section-title">Layanan Unggulan</div>
+  
+  <div class="menu">
+    <a href="sewabot.html">Sewa Bot</a>
+    <a href="panel.html">Panel Pterodactyl</a>
+  </div>
+
+
+  <div class="section-title">Kirim Feedback</div>
+  <button onclick="openModal()">Kirim Feedback</button>
+  <div id="showHistoryText" onclick="showHistoryModal()">📜 Lihat Riwayat Feedback</div>
+</main>
+
+<!-- Modal Kirim -->
+<div id="feedbackModal" class="modal">
+  <div class="modal-content">
+    <input type="text" id="username" placeholder="Nama kamu">
+    <textarea id="userMessage" rows="4" placeholder="Isi pesan kamu..."></textarea>
+    <input type="file" id="userImage" accept="image/*">
+    <input type="text" id="captchaInput" placeholder="">
+    <button onclick="sendFeedback()">Kirim Sekarang</button>
+  </div>
+</div>
+
+<!-- Modal Riwayat -->
+<div id="historyModal" class="modal">
+  <div class="modal-content" style="max-height: 70vh; overflow-y: auto;">
+    <h3 style="margin-bottom:10px; color: #38bdf8;">Riwayat Feedback</h3>
+    <div id="feedbackHistoryText" style="white-space: pre-wrap; font-size: 13px; color: #e2e8f0;"></div>
+    <button onclick="closeHistoryModal()" style="margin-top:15px;">Tutup</button>
+  </div>
+</div>
+
+<script>
+  const modal = document.getElementById('feedbackModal');
+  const captchaInput = document.getElementById('captchaInput');
+  let captchaValue = '';
+
+  function openModal() {
+    captchaValue = Math.floor(1000 + Math.random() * 9000).toString();
+    captchaInput.placeholder = 'Tulis angka ini: ' + captchaValue;
+    modal.style.display = 'flex';
+  }
+
+  function showAlert(text) {
+    const alertBox = document.createElement('div');
+    alertBox.textContent = text;
+    alertBox.style.position = 'fixed';
+    alertBox.style.top = '20px';
+    alertBox.style.left = '50%';
+    alertBox.style.transform = 'translateX(-50%)';
+    alertBox.style.background = '#38bdf8';
+    alertBox.style.color = '#000';
+    alertBox.style.padding = '10px 20px';
+    alertBox.style.borderRadius = '8px';
+    alertBox.style.zIndex = '1001';
+    alertBox.style.boxShadow = '0 0 10px rgba(0,0,0,0.3)';
+    document.body.appendChild(alertBox);
+    setTimeout(() => alertBox.remove(), 3000);
+  }
+
+  window.onclick = function(e) {
+    if (e.target == modal) modal.style.display = 'none';
+    if (e.target == document.getElementById('historyModal')) document.getElementById('historyModal').style.display = 'none';
+  }
+
+  async function sendFeedback() {
+    const name = document.getElementById('username').value.trim();
+    const message = document.getElementById('userMessage').value.trim();
+    const captcha = captchaInput.value.trim();
+    const image = document.getElementById('userImage').files[0];
+    if (!name || !message || !captcha) return showAlert("Isi semua kolom!");
+    if (captcha !== captchaValue) return showAlert("Captcha salah!");
+
+    const now = new Date();
+    const jam = now.toLocaleTimeString('id-ID');
+    const tanggal = now.toLocaleDateString('id-ID');
+    const format = `📝 Feedback KwcilID\n📌 Dari: ${name}\n⏰ Jam: ${jam}\n📅 Tanggal: ${tanggal}\n\n💬 Pesan:\n${message}`;
+
+    const token = '7593438716:AAGn6wr0_5-5uO2LXmKpagZcneoXdmca-zg';
+    const chatId = '7950114253';
+
+    try {
+      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text: format })
+      });
+      if (image) {
+        const formData = new FormData();
+        formData.append("chat_id", chatId);
+        formData.append("photo", image);
+        await fetch(`https://api.telegram.org/bot${token}/sendPhoto`, {
+          method: 'POST',
+          body: formData
+        });
+      }
+      showAlert("Feedback berhasil dikirim!");
+      modal.style.display = 'none';
+      const old = localStorage.getItem('wanz_feedback') || '';
+      localStorage.setItem('wanz_feedback', old + "\\n\\n" + format);
+    } catch (e) {
+      showAlert("Gagal mengirim!");
+    }
+  }
+
+  function showHistoryModal() {
+    const data = localStorage.getItem('wanz_feedback') || 'Belum ada feedback.';
+    document.getElementById('feedbackHistoryText').textContent = data;
+    document.getElementById('historyModal').style.display = 'flex';
+  }
+
+  function closeHistoryModal() {
+    document.getElementById('historyModal').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>
